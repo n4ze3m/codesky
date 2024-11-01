@@ -5,7 +5,7 @@ import {
   AppBskyEmbedRecordWithMedia,
 } from "@atproto/api";
 import { toCamelCase } from "../../utils/to-camelcase";
-import { CodeImportHeader } from "./CodeImportheader";
+import { CodeImportHeader } from "./CodeImportHeader";
 import { Image } from "./Image";
 import { useState } from "react";
 

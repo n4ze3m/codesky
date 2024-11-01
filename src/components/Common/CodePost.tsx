@@ -13,7 +13,7 @@ import {
 } from "@atproto/api";
 import { GitFork, MessageSquareCodeIcon, Star } from "lucide-react";
 import QuoteBlock from "./QuoteBlock";
-import { CodeImportHeader } from "./CodeImportheader";
+import { CodeImportHeader } from "./CodeImportHeader";
 import { isTypeVideo, videoInformations } from "../../utils/video";
 
 type Props = {
