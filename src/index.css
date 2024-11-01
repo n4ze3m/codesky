@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+body {
+  @apply bg-[#1e1e1e];
+  font-family: 'Fira Code', monospace;
+}
+
+.line-number {
+  @apply text-[#858585] text-right pr-4 select-none;
+  min-width: 40px;
+}
+
+.code-line {
+  @apply flex items-start;
+  counter-increment: line;
+}
+
+.code-line::before {
+  content: counter(line);
+  @apply text-[#858585] text-right pr-4 select-none min-w-[40px];
+}
+
+.syntax-comment {
+  @apply text-[#608b4e];
+}
+
+.syntax-keyword {
+  @apply text-[#569cd6];
+}
+
+.syntax-string {
+  @apply text-[#ce9178];
+}
+
+.syntax-function {
+  @apply text-[#dcdcaa];
+}
+
+.syntax-variable {
+  @apply text-[#9cdcfe];
+}
+
+.syntax-class {
+  @apply text-[#4ec9b0];
+}
+
+.syntax-for-loop {
+  @apply text-[#c586c0];
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[#1e1e1e];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#424242] rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#525252];
+}
+
+pre code.hljs {
+  background: #1e1e1e !important;
+  padding: 0 !important;
+}
+
+.syntax-keyword {
+  @apply text-[#569cd6];
+}
+
+.syntax-string {
+  @apply text-[#ce9178];
+}
+
+.syntax-comment {
+  @apply text-[#6a9955];
+}
+
+.syntax-class {
+  @apply text-[#4ec9b0];
+}
+
+.syntax-variable {
+  @apply text-[#9cdcfe];
+}
+
+.syntax-function {
+  @apply text-[#dcdcaa];
+}
+
+.code-line {
+  @apply font-mono;
+}
+
+.terminal-header {
+  @apply flex items-center gap-2 px-3 py-2 bg-[#1a1a1a] border-b border-[#2d2d2d];
+}
+
+
+.terminal-dot {
+  @apply w-3 h-3 rounded-full;
+}
+
+.terminal-window {
+  @apply bg-[#1e1e1e] rounded-lg border border-[#2d2d2d] overflow-hidden shadow-xl;
+}
+
+.code-block {
+  @apply relative font-mono text-sm leading-6;
+}
+
+.line-numbers {
+  @apply absolute left-0 top-0 bottom-0 w-12 bg-[#252526] text-[#858585] text-right pr-3 select-none;
+}
+
+.code-content {
+  @apply pl-16 pr-4;
+}
+
+.action-button {
+  @apply flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors duration-200
+         hover:bg-[#2d2d2d] text-[#d4d4d4] hover:text-[#569cd6];
+}
+
+.tab-active {
+  @apply bg-[#1e1e1e] border-t-2 border-[#569cd6] text-[#d4d4d4];
+}
+
+.tab-inactive {
+  @apply text-[#858585] hover:bg-[#2d2d2d];
+}
