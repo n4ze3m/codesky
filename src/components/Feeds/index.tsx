@@ -8,7 +8,7 @@ import { GitCloneLoading } from "../Common/Loading";
 export const Feeds = () => {
   const { ref, inView } = useInView();
   const [showLoading, setShowLoading] = useState(true);
-  
+
   const { data, status, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ["userFeeds"],
     refetchOnMount: false,
@@ -31,7 +31,7 @@ export const Feeds = () => {
     const timer = setTimeout(() => {
       setShowLoading(false);
     }, 4500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -44,7 +44,7 @@ export const Feeds = () => {
   if (status === "pending" || showLoading) {
     return <GitCloneLoading />;
   }
-  
+
   if (status === "error") {
     return <div>Error fetching feeds</div>;
   }
@@ -59,11 +59,11 @@ export const Feeds = () => {
         </div>
       </div>
 
-      {data?.pages.map((page, i) => (
-        <div className="space-y-3 mb-3" key={i}>
-          <PostRender feeds={page.data.feed} />
-        </div>
-      ))}
+      <div className="!space-y-4">
+        {data?.pages.map((page, i) => (
+          <PostRender key={i} feeds={page.data.feed} />
+        ))}
+      </div>
       <div ref={ref} className="h-10" />
     </div>
   );

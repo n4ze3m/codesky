@@ -169,7 +169,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
           onClick={() => setShowVideo(!showVideo)}
         >
           <span className="syntax-keyword">for</span>
-          <span className="syntax-for-loop text-[#d4d4d4]">{` (const image of ${displayName}.videos)`}</span>
+          <span className="syntax-for-loop text-[#d4d4d4]">{` (const video of ${displayName}.videos)`}</span>
           <span className="text-[#d4d4d4]">{` {`}</span>
           <span className="ml-2 text-xs text-[#6e6e6e] group-hover:text-[#8e8e8e]">
             Click to view
@@ -337,22 +337,21 @@ export const CodePost = ({ post, isCompose }: Props) => {
   }
 
   return (
-    <Link
-      to={`/post/${postLink(mainPost)}`}
-      className={`terminal-window ${isCompose ? "!rounded-b-none" : ""}`}
-    >
-      {renderRepostHeader()}
-      <CodeImportHeader
-        avatar={author?.avatar || ""}
-        displayName={displayName}
-        handle={author?.handle}
-        time={post?.post?.indexedAt}
-      />
-      {renderContent(content, embed)}
-      {renderQuote(embed)}
-      {renderActions({
-        post: mainPost,
-      })}
+    <Link to={`/post/${postLink(mainPost)}`}>
+      <div className={`terminal-window my-3 ${isCompose ? "!rounded-b-none" : ""}`}>
+        {renderRepostHeader()}
+        <CodeImportHeader
+          avatar={author?.avatar || ""}
+          displayName={displayName}
+          handle={author?.handle}
+          time={post?.post?.indexedAt}
+        />
+        {renderContent(content, embed)}
+        {renderQuote(embed)}
+        {renderActions({
+          post: mainPost,
+        })}
+      </div>
     </Link>
   );
 };
