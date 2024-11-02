@@ -6,6 +6,8 @@ import { GitForkIcon, GitCommitIcon, XCircle } from "lucide-react";
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import agent from "../../lib/api";
+import { useAtom } from "jotai";
+import { atomEditor } from "../../store/editor";
 
 type Props = {
   post: FeedViewPost | PostView;
@@ -14,6 +16,8 @@ type Props = {
 export const Repost = (props: Props) => {
   const { post } = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [_, setNewModal] = useAtom(atomEditor);
+
   const [hasReposted, setHasReposted] = useState(
     typeof (post.viewer as any)?.repost != "undefined"
   );
@@ -99,7 +103,15 @@ export const Repost = (props: Props) => {
               <span>{hasReposted ? "Reposted" : "Repost"}</span>
             </button>
 
-            <button className="flex items-center gap-2 p-2 hover:bg-[#2d2d2d] rounded-md text-[#cccccc]">
+            <button
+              onClick={() => {
+                setNewModal({
+                  show: true,
+                  quotePost: post as any,
+                });
+              }}
+              className="flex items-center gap-2 p-2 hover:bg-[#2d2d2d] rounded-md text-[#cccccc]"
+            >
               <GitCommitIcon className="w-4 h-4" />
               <span>Quote Post</span>
             </button>

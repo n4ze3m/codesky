@@ -12,18 +12,20 @@ import {
   AppBskyEmbedRecord,
   AppBskyEmbedRecordWithMedia,
 } from "@atproto/api";
-import { GitFork, MessageSquareCodeIcon } from "lucide-react";
+import { GitFork,  } from "lucide-react";
 import QuoteBlock from "./QuoteBlock";
 import { CodeImportHeader } from "./CodeImportHeader";
 import { isTypeVideo, videoInformations } from "../../utils/video";
 import { Star } from "./Star";
 import { Repost } from "./Repost";
+import { Comment } from "./Comment";
 
 type Props = {
   post: FeedViewPost;
+  isCompose?: boolean;
 };
 
-export const CodePost = ({ post }: Props) => {
+export const CodePost = ({ post, isCompose }: Props) => {
   const author = post?.post?.author;
   // @ts-ignore
   const content = post?.post?.record?.text;
@@ -48,6 +50,8 @@ export const CodePost = ({ post }: Props) => {
     );
   }
   const renderActions = ({ post }: { post: FeedViewPost | PostView }) => {
+    if (isCompose) return null;
+
     return (
       <div className="p-2 border-t border-[#2d2d2d]">
         <div className="code-line gap-2 flex flex-wrap items-center">
@@ -57,13 +61,7 @@ export const CodePost = ({ post }: Props) => {
           <span className="text-[#d4d4d4]"> {`{ `}</span>
           <Star post={post} />
           <span className="text-[#d4d4d4]">, </span>
-          <button className="hover:underline  gap-1 inline-flex items-center">
-            <MessageSquareCodeIcon className="inline w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="syntax-function text-sm sm:text-base">
-              comments:
-            </span>
-            <span className="syntax-number  text-sm sm:text-base">{2}</span>
-          </button>
+          <Comment post={post} />
           <span className="text-[#d4d4d4]">, </span>
           <Repost post={post} />
           <span className="text-[#d4d4d4]"> {`}`}</span>
@@ -255,6 +253,8 @@ export const CodePost = ({ post }: Props) => {
   const renderQuote = (embed: any) => {
     if (!embed?.record) return null;
 
+    if (isCompose) return null;
+
     return <QuoteBlock embed={embed as any} />;
   };
 
@@ -331,7 +331,7 @@ export const CodePost = ({ post }: Props) => {
   }
 
   return (
-    <div className="terminal-window">
+    <div className={`terminal-window ${isCompose ? "!rounded-b-none" : ""}`}>
       {renderRepostHeader()}
       <CodeImportHeader
         avatar={author?.avatar || ""}
@@ -341,9 +341,9 @@ export const CodePost = ({ post }: Props) => {
       />
       {renderContent(content, embed)}
       {renderQuote(embed)}
-      {renderActions({ 
-        post: mainPost
-       })}
+      {renderActions({
+        post: mainPost,
+      })}
     </div>
   );
 };
