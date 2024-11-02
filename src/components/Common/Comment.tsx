@@ -1,7 +1,5 @@
-import {
-  FeedViewPost,
-  PostView,
-} from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+import { FeedViewPost, PostView } from '@atproto/api/src/client/types/app/bsky/feed/defs';
+
 import { useAtom } from "jotai";
 import { MessageSquareCodeIcon } from "lucide-react";
 import { atomEditor } from "../../store/editor";

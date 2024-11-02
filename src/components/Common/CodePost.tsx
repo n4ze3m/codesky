@@ -1,8 +1,4 @@
-import {
-  FeedViewPost,
-  PostView,
-  ReasonRepost,
-} from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+import { FeedViewPost, PostView , ReasonRepost} from '@atproto/api/src/client/types/app/bsky/feed/defs';
 import { toCamelCase } from "../../utils/to-camelcase";
 import { useState } from "react";
 import { Image } from "./Image";

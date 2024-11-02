@@ -1,7 +1,5 @@
-import {
-  FeedViewPost,
-  PostView,
-} from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+import { FeedViewPost, PostView } from '@atproto/api/src/client/types/app/bsky/feed/defs';
+
 import { GitForkIcon, GitCommitIcon, XCircle } from "lucide-react";
 import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";

@@ -1,4 +1,4 @@
-import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+import { FeedViewPost } from '@atproto/api/src/client/types/app/bsky/feed/defs';
 import { useCallback } from "react";
 import { CodePost } from "./CodePost";
 
