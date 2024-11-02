@@ -8,6 +8,8 @@ import { toCamelCase } from "../../utils/to-camelcase";
 import { CodeImportHeader } from "./CodeImportHeader";
 import { Image } from "./Image";
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { postLink } from "../../lib/post-link";
 
 export default function QuoteBlock(props: {
   embed: AppBskyEmbedRecord.View | AppBskyEmbedRecordWithMedia.View;
@@ -88,7 +90,8 @@ export default function QuoteBlock(props: {
     );
   };
   return (
-    <div className="border-t p-2 border-[#2d2d2d]">
+    <Link to={`/post/${postLink(props?.post, uri)}`}>
+      <div  className="border-t p-2 border-[#2d2d2d]">
       <CodeImportHeader
         noBorder
         avatar={author?.avatar || ""}
@@ -112,6 +115,7 @@ export default function QuoteBlock(props: {
           ? // @ts-ignore
             renderImages((embed.record.embeds as any)[0])
           : ""}
-    </div>
+   </div>
+    </Link>
   );
 }

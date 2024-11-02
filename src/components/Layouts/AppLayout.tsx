@@ -14,6 +14,7 @@ import { Modal } from "../Common/Modal";
 import { CodeEditor } from "../Common/CodeEditor";
 import { isAuthenticated } from "../../utils/auth";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import agent, { SESSION_LOCAL_STORAGE_KEY } from "../../lib/api";
 const ActivityBarItem = ({
   icon: Icon,
   label,
@@ -58,13 +59,13 @@ const navLinks = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Bell, label: "Notifications", href: "/notifications" },
   { icon: User, label: "Profile", href: "/profile" },
-  // { icon: LogOut, label: "Logout", href: "/logout", isActive: false }
 ];
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const [newModal, setNewModal] = useAtom(atomEditor);
-  const [activeTab, setActiveTab] = React.useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
+  const [showLogoutModal, setShowLogoutModal] = React.useState(false);
+  const [logoutConfirmation, setLogoutConfirmation] = React.useState("");
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -73,6 +74,15 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
       navigate({ to: "/login" });
     }
   }, [navigate]);
+
+  const handleLoutout = async () => {
+    if (logoutConfirmation === "logout") {
+      await agent.logout();
+      setShowLogoutModal(false);
+      localStorage.removeItem(SESSION_LOCAL_STORAGE_KEY);
+      navigate({ to: "/login" });
+    }
+  };
   return (
     <>
       <div className="flex h-screen bg-[#1e1e1e] text-[#d4d4d4] overflow-hidden">
@@ -131,6 +141,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                 label="Logout"
                 isActive={false}
                 onClick={() => {
+                  setShowLogoutModal(true);
                   setIsMobileMenuOpen(false);
                 }}
               />
@@ -174,7 +185,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
             <ActivityBarItem
               href=""
               isActive={false}
-              onClick={() => {}}
+              onClick={() => setShowLogoutModal(true)}
               icon={LogOut}
               label="Logout"
             />
@@ -187,14 +198,6 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="space-y-4">{children}</div>
           </div>
         </main>
-
-        {/* Right Sidebar - Desktop always visible, Mobile slide-in */}
-        {/* <div
-          className={`fixed inset-y-0 right-0 w-64 bg-[#252526] border-l border-[#1e1e1e] transform transition-transform md:relative md:translate-x-0 ${
-            isMobileSidebarOpen ? "translate-x-0" : "translate-x-full"
-          } md:block z-30 ${isMobileSidebarOpen ? "mt-14" : ""} md:mt-0`}
-        >
-        </div> */}
       </div>
       <Modal
         isOpen={newModal.show}
@@ -209,6 +212,42 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           quotePost={newModal.quotePost}
           post={newModal.post}
         />
+      </Modal>
+      <Modal
+        isOpen={showLogoutModal}
+        size="max-w-xl"
+        onClose={() => setShowLogoutModal(false)}
+        title="Are you sure you want to logout?"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-[#858585]">
+            Please type{" "}
+            <span className="font-semibold text-[#d4d4d4]">logout</span> to
+            confirm.
+          </p>
+          <input
+            type="text"
+            value={logoutConfirmation}
+            onChange={(e) => setLogoutConfirmation(e.target.value)}
+            className="w-full bg-[#2d2d2d] border border-[#3d3d3d] rounded px-3 py-2 focus:outline-none focus:border-[#569cd6]"
+            placeholder="Type 'logout' to confirm"
+          />
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={() => setShowLogoutModal(false)}
+              className="px-4 py-2 text-sm text-[#d4d4d4] hover:bg-[#2d2d2d] rounded"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleLoutout}
+              disabled={logoutConfirmation !== "logout"}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
       </Modal>
     </>
   );
