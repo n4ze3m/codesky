@@ -3,12 +3,27 @@ import { EditorView } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { vim } from "@replit/codemirror-vim";
-import { FileImage, FileVideo, Terminal, X, Upload } from "lucide-react";
+import {
+  FileImage,
+  FileVideo,
+  Terminal,
+  X,
+  Upload,
+  Loader2,
+} from "lucide-react";
 import { keymap } from "@codemirror/view";
 import { defaultKeymap } from "@codemirror/commands";
 import { Record } from "@atproto/api/src/client/types/app/bsky/feed/post";
 import { lineNumbers } from "@codemirror/view";
 import { CodePost } from "./CodePost";
+import { useMutation } from "@tanstack/react-query";
+import agent from "../../lib/api";
+import { RichText } from "@atproto/api";
+import { useAtom } from "jotai";
+import { atomEditor } from "../../store/editor";
+import toast from "react-hot-toast";
+import { dataURItoBlob } from "../../utils/uri-to-blob";
+import { createImages } from "../../lib/create-images";
 
 interface CodeEditorProps {
   cid?: string | null;
@@ -17,7 +32,7 @@ interface CodeEditorProps {
   embed?: any;
 }
 
-export function CodeEditor({ quotePost, post }: CodeEditorProps) {
+export function CodeEditor({ quotePost, post, cid }: CodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
   const [charCount, setCharCount] = useState(0);
@@ -25,6 +40,7 @@ export function CodeEditor({ quotePost, post }: CodeEditorProps) {
   const [video, setVideo] = useState<string | undefined>();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const [_, setNewModal] = useAtom(atomEditor);
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -113,12 +129,96 @@ export function CodeEditor({ quotePost, post }: CodeEditorProps) {
   const removeVideo = () => {
     setVideo(undefined);
   };
+  const { mutate: handleSubmit, isPending } = useMutation({
+    mutationFn: async () => {
+      if (!editorView) return;
+      const content = editorView.state.doc.toString();
+      const richText = new RichText({ text: content });
+      await richText.detectFacets(agent);
 
-  const handleSubmit = () => {
-    if (!editorView) return;
-    const content = editorView.state.doc.toString();
-    console.log(content);
-  };
+      const postRecord: Record = {
+        text: richText.text,
+        facets: richText.facets,
+        langs: ["en"],
+        createdAt: new Date().toISOString(),
+      };
+
+      const imageBlobs = await createImages(agent, images);
+      if (quotePost) {
+        if (imageBlobs.length) {
+          postRecord.embed = {
+            $type: "app.bsky.embed.recordWithMedia",
+            media: {
+              $type: "app.bsky.embed.images",
+              images: imageBlobs.map((blob) => ({
+                image: blob,
+                alt: "",
+              })),
+            },
+            record: {
+              $type: "app.bsky.embed.record",
+              record: {
+                cid: quotePost?.cid,
+                uri: quotePost?.uri,
+              },
+            },
+          };
+        } else {
+          postRecord.embed = {
+            $type: "app.bsky.embed.record",
+            record: {
+              cid: quotePost?.cid,
+              uri: quotePost?.uri,
+            },
+          };
+        }
+      } else {
+        // normal
+        if (post) {
+          postRecord.reply = {
+            root: {
+              cid: cid!,
+              // @ts-ignore
+              uri: post?.uri!,
+            },
+            parent: {
+              cid: cid!,
+              // @ts-ignore
+              uri: post.uri,
+            },
+          };
+        }
+        if (imageBlobs.length) {
+          postRecord.embed = {
+            $type: "app.bsky.embed.images",
+            images: imageBlobs.map((blob) => ({
+              image: blob,
+              alt: "",
+            })),
+          };
+        }
+      }
+
+      const response = await agent.post(postRecord);
+      console.log(response);
+    },
+    onSuccess: (d) => {
+      // onClose();
+      setNewModal({
+        show: false,
+        post: null,
+        cid: null,
+        quotePost: null,
+      });
+
+      toast.success("Post created successfully!");
+    },
+    onError: (error) => {
+      console.error(error);
+
+      toast.error("Error creating post");
+    },
+  });
 
   return (
     <div className="bg-[#1e1e1e] rounded-lg border border-[#2d2d2d] overflow-hidden">
@@ -131,16 +231,14 @@ export function CodeEditor({ quotePost, post }: CodeEditorProps) {
           isCompose
         />
       )}
-      {
-        post && (
-          <CodePost
-            post={{
-              post: post as any,
-            }}
-            isCompose
-          />
-        )
-      }
+      {post && (
+        <CodePost
+          post={{
+            post: post as any,
+          }}
+          isCompose
+        />
+      )}
       <div className="flex items-center justify-between bg-[#252526] px-4 py-2 border-b border-[#2d2d2d]">
         <div className="flex items-center space-x-4">
           <Terminal className="w-5 h-5 text-[#569cd6]" />
@@ -162,21 +260,8 @@ export function CodeEditor({ quotePost, post }: CodeEditorProps) {
       <div ref={editorRef} className="border-b border-[#2d2d2d]" />
 
       <div className="p-4 border-b border-[#2d2d2d]">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap justify-end gap-4">
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[#d4d4d4] text-sm">
-                Images ({images.length}/4)
-              </span>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={images.length >= 4 || !!video}
-                className="flex items-center space-x-2 px-3 py-1 rounded text-sm bg-[#2d2d2d] text-[#d4d4d4] hover:bg-[#3d3d3d] disabled:opacity-50"
-              >
-                <FileImage className="w-4 h-4" />
-                <span>Add Images</span>
-              </button>
-            </div>
             <input
               ref={fileInputRef}
               type="file"
@@ -205,7 +290,7 @@ export function CodeEditor({ quotePost, post }: CodeEditorProps) {
           </div>
 
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
+            {/* <div className="flex items-center justify-between mb-2">
               <span className="text-[#d4d4d4] text-sm">Video</span>
               <button
                 onClick={() => videoInputRef.current?.click()}
@@ -215,7 +300,7 @@ export function CodeEditor({ quotePost, post }: CodeEditorProps) {
                 <FileVideo className="w-4 h-4" />
                 <span>Add Video</span>
               </button>
-            </div>
+            </div> */}
             <input
               ref={videoInputRef}
               type="file"
@@ -240,15 +325,38 @@ export function CodeEditor({ quotePost, post }: CodeEditorProps) {
             )}
           </div>
         </div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[#d4d4d4] text-sm">
+            Images ({images.length}/4)
+          </span>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={images.length >= 4 || !!video}
+            className="flex items-center space-x-2 px-3 py-1 rounded text-sm bg-[#2d2d2d] text-[#d4d4d4] hover:bg-[#3d3d3d] disabled:opacity-50"
+          >
+            <FileImage className="w-4 h-4" />
+            <span>Add Images</span>
+          </button>
+        </div>
       </div>
 
       <div className="p-4">
         <button
-          onClick={handleSubmit}
-          className="w-full bg-[#569cd6] text-white rounded px-4 py-2 flex items-center justify-center space-x-2 hover:bg-[#4e8cc2]"
+          onClick={() => handleSubmit()}
+          disabled={isPending}
+          className="w-full bg-[#569cd6] text-white rounded px-4 py-2 flex items-center justify-center space-x-2 hover:bg-[#4e8cc2] disabled:opacity-50"
         >
-          <Upload className="w-4 h-4" />
-          <span>git.push(origin, main)</span>
+          {isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Pushing...</span>
+            </>
+          ) : (
+            <>
+              <Upload className="w-4 h-4" />
+              <span>git.push(origin, main)</span>
+            </>
+          )}
         </button>
       </div>
     </div>

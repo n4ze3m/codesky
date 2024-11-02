@@ -1,4 +1,8 @@
-import { FeedViewPost, PostView , ReasonRepost} from '@atproto/api/src/client/types/app/bsky/feed/defs';
+import {
+  FeedViewPost,
+  PostView,
+  ReasonRepost,
+} from "@atproto/api/src/client/types/app/bsky/feed/defs";
 import { toCamelCase } from "../../utils/to-camelcase";
 import { useState } from "react";
 import { Image } from "./Image";
@@ -8,7 +12,7 @@ import {
   AppBskyEmbedRecord,
   AppBskyEmbedRecordWithMedia,
 } from "@atproto/api";
-import { GitFork,  } from "lucide-react";
+import { GitFork } from "lucide-react";
 import QuoteBlock from "./QuoteBlock";
 import { CodeImportHeader } from "./CodeImportHeader";
 import { isTypeVideo, videoInformations } from "../../utils/video";
@@ -131,7 +135,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
 
         {showImages && (
           <div className="ml-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  gap-4 mt-2">
               {images.map(
                 (img: { image: string; alt: string }, index: number) => (
                   <div key={index} className="relative aspect-square">
@@ -174,7 +178,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
               {videoInfo.map(
                 (
                   video: {
-                    ratio: { height: number; width: number };
+                    ratio?: { height?: number; width?: number };
                     playlist: any;
                     thumbnail: any;
                     cid: any;
@@ -185,7 +189,10 @@ export const CodePost = ({ post, isCompose }: Props) => {
                     <div
                       className="rounded-lg overflow-hidden bg-[#1e1e1e] shadow-lg"
                       style={{
-                        paddingBottom: `${(video.ratio.height / video.ratio.width) * 100}%`,
+                        paddingBottom:
+                          video.ratio && video.ratio.height && video.ratio.width
+                            ? `${(video.ratio.height / video.ratio.width) * 100}%`
+                            : "56.25%", // Default to 16:9 aspect ratio
                       }}
                     >
                       <video
