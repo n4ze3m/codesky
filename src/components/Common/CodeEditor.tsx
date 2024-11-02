@@ -16,7 +16,7 @@ import { defaultKeymap } from "@codemirror/commands";
 import { Record } from "@atproto/api/src/client/types/app/bsky/feed/post";
 import { lineNumbers } from "@codemirror/view";
 import { CodePost } from "./CodePost";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import agent from "../../lib/api";
 import { RichText } from "@atproto/api";
 import { useAtom } from "jotai";
@@ -41,6 +41,7 @@ export function CodeEditor({ quotePost, post, cid }: CodeEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const [_, setNewModal] = useAtom(atomEditor);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -200,9 +201,9 @@ export function CodeEditor({ quotePost, post, cid }: CodeEditorProps) {
       }
 
       const response = await agent.post(postRecord);
-      console.log(response);
     },
     onSuccess: (d) => {
+      queryClient.invalidateQueries({ queryKey: ["userFeeds"] });
       // onClose();
       setNewModal({
         show: false,

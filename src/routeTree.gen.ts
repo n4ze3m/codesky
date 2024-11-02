@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PostRepoCidImport } from './routes/post.$repo.$cid'
 
 // Create Virtual Routes
 
@@ -40,6 +41,12 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const PostRepoCidRoute = PostRepoCidImport.update({
+  id: '/post/$repo/$cid',
+  path: '/post/$repo/$cid',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -65,6 +72,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
+    '/post/$repo/$cid': {
+      id: '/post/$repo/$cid'
+      path: '/post/$repo/$cid'
+      fullPath: '/post/$repo/$cid'
+      preLoaderRoute: typeof PostRepoCidImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -74,12 +88,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/post/$repo/$cid': typeof PostRepoCidRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/post/$repo/$cid': typeof PostRepoCidRoute
 }
 
 export interface FileRoutesById {
@@ -87,14 +103,15 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/post/$repo/$cid': typeof PostRepoCidRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/login'
+  fullPaths: '/' | '/about' | '/login' | '/post/$repo/$cid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/login'
-  id: '__root__' | '/' | '/about' | '/login'
+  to: '/' | '/about' | '/login' | '/post/$repo/$cid'
+  id: '__root__' | '/' | '/about' | '/login' | '/post/$repo/$cid'
   fileRoutesById: FileRoutesById
 }
 
@@ -102,12 +119,14 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AboutLazyRoute: typeof AboutLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
+  PostRepoCidRoute: typeof PostRepoCidRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AboutLazyRoute: AboutLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
+  PostRepoCidRoute: PostRepoCidRoute,
 }
 
 export const routeTree = rootRoute
@@ -124,7 +143,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/login"
+        "/login",
+        "/post/$repo/$cid"
       ]
     },
     "/": {
@@ -135,6 +155,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.lazy.tsx"
+    },
+    "/post/$repo/$cid": {
+      "filePath": "post.$repo.$cid.tsx"
     }
   }
 }

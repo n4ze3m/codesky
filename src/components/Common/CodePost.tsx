@@ -19,6 +19,8 @@ import { isTypeVideo, videoInformations } from "../../utils/video";
 import { Star } from "./Star";
 import { Repost } from "./Repost";
 import { Comment } from "./Comment";
+import { Link } from "@tanstack/react-router";
+import { postLink } from "../../lib/post-link";
 
 type Props = {
   post: FeedViewPost;
@@ -26,6 +28,7 @@ type Props = {
 };
 
 export const CodePost = ({ post, isCompose }: Props) => {
+  console.log(post);
   const author = post?.post?.author;
   // @ts-ignore
   const content = post?.post?.record?.text;
@@ -334,7 +337,10 @@ export const CodePost = ({ post, isCompose }: Props) => {
   }
 
   return (
-    <div className={`terminal-window ${isCompose ? "!rounded-b-none" : ""}`}>
+    <Link
+      to={`/post/${postLink(mainPost)}`}
+      className={`terminal-window ${isCompose ? "!rounded-b-none" : ""}`}
+    >
       {renderRepostHeader()}
       <CodeImportHeader
         avatar={author?.avatar || ""}
@@ -347,6 +353,6 @@ export const CodePost = ({ post, isCompose }: Props) => {
       {renderActions({
         post: mainPost,
       })}
-    </div>
+    </Link>
   );
 };

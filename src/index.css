@@ -141,3 +141,8 @@ pre code.hljs {
 .tab-inactive {
   @apply text-[#858585] hover:bg-[#2d2d2d];
 }
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
