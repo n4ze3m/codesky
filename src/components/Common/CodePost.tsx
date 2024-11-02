@@ -1,5 +1,6 @@
 import {
   FeedViewPost,
+  PostView,
   ReasonRepost,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { toCamelCase } from "../../utils/to-camelcase";
@@ -11,10 +12,12 @@ import {
   AppBskyEmbedRecord,
   AppBskyEmbedRecordWithMedia,
 } from "@atproto/api";
-import { GitFork, MessageSquareCodeIcon, Star } from "lucide-react";
+import { GitFork, MessageSquareCodeIcon } from "lucide-react";
 import QuoteBlock from "./QuoteBlock";
 import { CodeImportHeader } from "./CodeImportHeader";
 import { isTypeVideo, videoInformations } from "../../utils/video";
+import { Star } from "./Star";
+import { Repost } from "./Repost";
 
 type Props = {
   post: FeedViewPost;
@@ -31,9 +34,6 @@ export const CodePost = ({ post }: Props) => {
     | AppBskyEmbedRecord.View
     | AppBskyEmbedRecordWithMedia.View;
 
-  const like = post?.post?.likeCount;
-  const reply = post?.post?.replyCount;
-  const repost = post?.post?.repostCount;
   const mainPost = post?.post;
   if (!mainPost) {
     return (
@@ -47,16 +47,7 @@ export const CodePost = ({ post }: Props) => {
       </div>
     );
   }
-  const renderActions = ({
-    like,
-    reply,
-    repost,
-  }: {
-    id?: string;
-    like: number;
-    reply: number;
-    repost: number;
-  }) => {
+  const renderActions = ({ post }: { post: FeedViewPost | PostView }) => {
     return (
       <div className="p-2 border-t border-[#2d2d2d]">
         <div className="code-line gap-2 flex flex-wrap items-center">
@@ -64,29 +55,17 @@ export const CodePost = ({ post }: Props) => {
           <span className="text-[#d4d4d4]"> actions </span>
           <span className="syntax-operator">=</span>
           <span className="text-[#d4d4d4]"> {`{ `}</span>
-          <button className="hover:underline  gap-1 inline-flex items-center">
-            <Star className="inline w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="syntax-function text-sm sm:text-base">stars:</span>
-            <span className="syntax-number text-sm sm:text-base">{like}</span>
-          </button>
+          <Star post={post} />
           <span className="text-[#d4d4d4]">, </span>
           <button className="hover:underline  gap-1 inline-flex items-center">
             <MessageSquareCodeIcon className="inline w-4 h-4 sm:w-5 sm:h-5" />
             <span className="syntax-function text-sm sm:text-base">
               comments:
             </span>
-            <span className="syntax-number  text-sm sm:text-base">{reply}</span>
+            <span className="syntax-number  text-sm sm:text-base">{2}</span>
           </button>
           <span className="text-[#d4d4d4]">, </span>
-          <button className="hover:underline gap-1 inline-flex items-center">
-            <GitFork className="inline w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="syntax-function text-sm sm:text-base">
-              reposts:
-            </span>
-            <span className="syntax-number  text-sm sm:text-base">
-              {repost}
-            </span>
-          </button>
+          <Repost post={post} />
           <span className="text-[#d4d4d4]"> {`}`}</span>
         </div>
       </div>
@@ -276,7 +255,7 @@ export const CodePost = ({ post }: Props) => {
   const renderQuote = (embed: any) => {
     if (!embed?.record) return null;
 
-    return <QuoteBlock embed={embed.record as any} />;
+    return <QuoteBlock embed={embed as any} />;
   };
 
   if (!!post.reply && !post.reason) {
@@ -294,13 +273,15 @@ export const CodePost = ({ post }: Props) => {
 
         <div className="thread-content p-4">
           {post.reply.parent.cid != post.reply.root.cid &&
-          // @ts-ignore
+            // @ts-ignore
             post.reply.parent.author.did == post.reply.root.author.did && (
               <div className="parent-thread">
-                <div className="code-line syntax-comment mb-2">// Parent Thread</div>
+                <div className="code-line syntax-comment mb-2">
+                  // Parent Thread
+                </div>
                 <CodePost post={{ post: post.reply.parent as any }} />
               </div>
-          )}
+            )}
 
           {(post.reply.parent.record as any)?.reply?.parent.cid !=
           (post.reply.parent.record as any)?.reply?.root.cid ? (
@@ -322,7 +303,7 @@ export const CodePost = ({ post }: Props) => {
               <span className="syntax-keyword">constructor </span>
               <span className="text-[#d4d4d4]">{`() {`}</span>
             </div>
-            
+
             <div className="pl-6 border-l-2 border-[#569cd6]">
               <div className="code-line syntax-comment">// Original Post</div>
               <CodePost post={{ post: post.reply.parent as any }} />
@@ -360,8 +341,9 @@ export const CodePost = ({ post }: Props) => {
       />
       {renderContent(content, embed)}
       {renderQuote(embed)}
-      {/* @ts-ignore */}
-      {renderActions({ like, reply, repost })}
+      {renderActions({ 
+        post: mainPost
+       })}
     </div>
   );
 };
