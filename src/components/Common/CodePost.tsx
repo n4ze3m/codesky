@@ -126,7 +126,11 @@ export const CodePost = ({ post, isCompose }: Props) => {
         <div className="code-line syntax-comment">{"// Images"}</div>
         <div
           className="code-line gap-2 cursor-pointer hover:opacity-80 hover:outline hover:outline-1 hover:outline-[#4a4a4a] rounded-md transition-all duration-200 group"
-          onClick={() => setShowImages(!showImages)}
+          onClick={(e) => {
+            e?.preventDefault();
+            e?.stopPropagation();
+            setShowImages(!showImages);
+          }}
         >
           <span className="syntax-keyword">for</span>
           <span className="syntax-for-loop text-[#d4d4d4]">{` (const image of ${displayName}.images)`}</span>
@@ -166,7 +170,11 @@ export const CodePost = ({ post, isCompose }: Props) => {
         <div className="code-line syntax-comment">{"// Videos"}</div>
         <div
           className="code-line gap-2 cursor-pointer hover:opacity-80 hover:outline hover:outline-1 hover:outline-[#4a4a4a] rounded-md transition-all duration-200 group"
-          onClick={() => setShowVideo(!showVideo)}
+          onClick={(e) => {
+            e?.preventDefault();
+            e?.stopPropagation();
+            setShowVideo(!showVideo);
+          }}
         >
           <span className="syntax-keyword">for</span>
           <span className="syntax-for-loop text-[#d4d4d4]">{` (const video of ${displayName}.videos)`}</span>
@@ -268,12 +276,12 @@ export const CodePost = ({ post, isCompose }: Props) => {
     return (
       <div className="reply-thread-container bg-[#1e1e1e] rounded-lg border border-[#2d2d2d]">
         <div className="thread-header border-b border-[#2d2d2d] p-2">
-          <div className="code-line gap-1">
-            <span className="syntax-keyword">class </span>
-            <span className="text-[#4ec9b0]">ThreadResponse </span>
-            <span className="text-[#d4d4d4]">extends </span>
-            <span className="text-[#4ec9b0]">Thread </span>
-            <span className="text-[#d4d4d4]">{`{`}</span>
+          <div className="flex gap-1">
+            <span className="syntax-keyword">git </span>
+            <span className="text-[#4ec9b0]">branch </span>
+            <span className="text-[#d4d4d4]">--track </span>
+            <span className="text-[#4ec9b0]">feature </span>
+            <span className="text-[#d4d4d4]">origin/main</span>
           </div>
         </div>
 
@@ -283,7 +291,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
             post.reply.parent.author.did == post.reply.root.author.did && (
               <div className="parent-thread">
                 <div className="code-line syntax-comment mb-2">
-                  // Parent Thread
+                  # Parent commit
                 </div>
                 <CodePost post={{ post: post.reply.parent as any }} />
               </div>
@@ -292,44 +300,43 @@ export const CodePost = ({ post, isCompose }: Props) => {
           {(post.reply.parent.record as any)?.reply?.parent.cid !=
           (post.reply.parent.record as any)?.reply?.root.cid ? (
             <div className="expand-thread my-2">
-              <div className="code-line gap-1">
-                <span className="syntax-keyword">async </span>
-                <span className="text-[#dcdcaa]">loadPreviousReplies</span>
-                <span className="text-[#d4d4d4]">{`() {`}</span>
-                <span className="text-[#569cd6] cursor-pointer hover:underline ml-2">
-                  await thread.fetchMore()
-                </span>
-                <span className="text-[#d4d4d4]">{`}`}</span>
+              <div className="flex gap-1">
+                <span className="syntax-keyword">git </span>
+                <span className="text-[#dcdcaa]">log</span>
+                <span className="text-[#d4d4d4]"> --oneline</span>
+                <Link
+                  to={`/post/${postLink(post.reply.parent)}`}
+                  className="text-[#569cd6] cursor-pointer hover:underline ml-2"
+                >
+                  origin/main..HEAD
+                </Link>
               </div>
             </div>
           ) : null}
 
           <div className="replies-container">
-            <div className="code-line mb-2">
-              <span className="syntax-keyword">constructor </span>
-              <span className="text-[#d4d4d4]">{`() {`}</span>
-            </div>
-
             <div className="pl-6 border-l-2 border-[#569cd6]">
-              <div className="code-line syntax-comment">// Original Post</div>
+              <div className="code-line syntax-comment"># Base commit</div>
               <CodePost post={{ post: post.reply.parent as any }} />
             </div>
-
             <div className="mt-4 pl-6 border-l-2 border-[#4ec9b0]">
-              <div className="code-line syntax-comment">// Reply</div>
+              <div className="code-line syntax-comment"># New changes</div>
               <CodePost post={{ post: post.post as any }} />
             </div>
-
-            <div className="code-line mt-2">
-              <span className="text-[#d4d4d4]">{`}`}</span>
-            </div>
+            <div className="flex gap-1 mt-2">
+              <span className="syntax-keyword">git </span>
+              <span className="text-[#4ec9b0]">branch </span>
+              <span className="text-[#d4d4d4]">--track </span>
+              <span className="text-[#4ec9b0]">feature </span>
+              <span className="text-[#d4d4d4]">origin/main</span>
+            </div>{" "}
           </div>
         </div>
 
         <div className="thread-footer border-t border-[#2d2d2d] p-2">
-          <div className="code-line">
-            <span className="text-[#d4d4d4]">{`}`}</span>
-            <span className="syntax-comment ml-2">// End ThreadResponse</span>
+          <div className="flex">
+            <span className="text-[#d4d4d4]">git merge feature</span>
+            <span className="syntax-comment ml-2"># Merge complete</span>
           </div>
         </div>
       </div>
@@ -338,7 +345,9 @@ export const CodePost = ({ post, isCompose }: Props) => {
 
   return (
     <Link to={`/post/${postLink(mainPost)}`}>
-      <div className={`terminal-window my-3 ${isCompose ? "!rounded-b-none" : ""}`}>
+      <div
+        className={`terminal-window ${isCompose ? "!rounded-b-none" : "my-3 "}`}
+      >
         {renderRepostHeader()}
         <CodeImportHeader
           avatar={author?.avatar || ""}
