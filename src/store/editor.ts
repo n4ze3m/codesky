@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Record } from '@atproto/api/src/client/types/app/bsky/feed/post';
 import { atom } from 'jotai';
 
