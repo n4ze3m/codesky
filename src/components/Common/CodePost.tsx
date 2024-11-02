@@ -306,7 +306,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
                 <span className="text-[#d4d4d4]"> --oneline</span>
                 <Link
                   to={`/post/${postLink(post.reply.parent)}`}
-                  className="text-[#569cd6] cursor-pointer hover:underline ml-2"
+                  className="text-[#569cd6] cursor-pointer underline ml-2"
                 >
                   origin/main..HEAD
                 </Link>
