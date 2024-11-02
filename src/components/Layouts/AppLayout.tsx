@@ -13,28 +13,40 @@ import React from "react";
 import { Modal } from "../Common/Modal";
 import { CodeEditor } from "../Common/CodeEditor";
 import { isAuthenticated } from "../../utils/auth";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 const ActivityBarItem = ({
   icon: Icon,
   label,
   isActive = false,
+  href,
   onClick,
 }: {
   icon: React.ElementType;
   label: string;
-  isActive?: boolean;
+  href: string;
+  isActive: boolean;
   onClick?: () => void;
 }) => (
   <div className="relative group">
-    <button
-      onClick={onClick}
-      className={`p-3 w-full flex justify-center ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
-    >
-      <Icon
-        className={`w-6 h-6 ${isActive ? "text-[#569cd6]" : "text-[#858585] group-hover:text-[#d4d4d4]"}`}
-      />
-    </button>
-    {/* Tooltip - Only show on desktop */}
+    {onClick ? (
+      <button
+        onClick={onClick}
+        className={`p-3 w-full flex justify-center ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
+      >
+        <Icon
+          className={`w-6 h-6 ${isActive ? "text-[#569cd6]" : "text-[#858585] group-hover:text-[#d4d4d4]"}`}
+        />
+      </button>
+    ) : (
+      <Link
+        to={href}
+        className={`p-3 w-full flex justify-center ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
+      >
+        <Icon
+          className={`w-6 h-6 ${isActive ? "text-[#569cd6]" : "text-[#858585] group-hover:text-[#d4d4d4]"}`}
+        />
+      </Link>
+    )}
     <div className="hidden md:group-hover:block absolute left-16 top-1/2 -translate-y-1/2 z-50">
       <div className="bg-[#252526] text-[#d4d4d4] text-xs py-1 px-2 rounded shadow-lg whitespace-nowrap">
         {label}
@@ -42,12 +54,20 @@ const ActivityBarItem = ({
     </div>
   </div>
 );
+const navLinks = [
+  { icon: Home, label: "Home", href: "/" },
+  { icon: Bell, label: "Notifications", href: "/notifications" },
+  { icon: User, label: "Profile", href: "/profile" },
+  { icon: PlusSquare, label: "New Post", href: "/new" },
+  // { icon: LogOut, label: "Logout", href: "/logout", isActive: false }
+];
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const [newModal, setNewModal] = useAtom(atomEditor);
   const [activeTab, setActiveTab] = React.useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   React.useEffect(() => {
     if (!isAuthenticated()) {
@@ -85,45 +105,20 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
             className={`w-64 h-full bg-[#333333] transform transition-transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
           >
             <div className="p-4 space-y-4">
-              <ActivityBarItem
-                icon={Home}
-                label="Home"
-                isActive={activeTab === "home"}
-                onClick={() => {
-                  setActiveTab("home");
-                  setIsMobileMenuOpen(false);
-                }}
-              />
-              <ActivityBarItem
-                icon={Bell}
-                label="Notifications"
-                isActive={activeTab === "notifications"}
-                onClick={() => {
-                  setActiveTab("notifications");
-                  setIsMobileMenuOpen(false);
-                }}
-              />
-              <ActivityBarItem
-                icon={User}
-                label="Profile"
-                isActive={activeTab === "profile"}
-                onClick={() => {
-                  setActiveTab("profile");
-                  setIsMobileMenuOpen(false);
-                }}
-              />
-              <ActivityBarItem
-                icon={PlusSquare}
-                label="New Post"
-                isActive={activeTab === "new"}
-                onClick={() => {
-                  setActiveTab("new");
-                  setIsMobileMenuOpen(false);
-                }}
-              />
+              {navLinks.map((n) => (
+                <ActivityBarItem
+                  href={n.href}
+                  icon={n.icon}
+                  isActive={pathname === n.href}
+                  label={n.label}
+                />
+              ))}
+
               <ActivityBarItem
                 icon={LogOut}
+                href="logout"
                 label="Logout"
+                isActive={false}
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                 }}
@@ -144,33 +139,23 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="flex-1 w-full pt-4 border-t border-[#252526]">
-            <ActivityBarItem
-              icon={Home}
-              label="Home"
-              isActive={activeTab === "home"}
-              onClick={() => setActiveTab("home")}
-            />
-            <ActivityBarItem
-              icon={Bell}
-              label="Notifications"
-              isActive={activeTab === "notifications"}
-              onClick={() => setActiveTab("notifications")}
-            />
-            <ActivityBarItem
-              icon={User}
-              label="Profile"
-              isActive={activeTab === "profile"}
-              onClick={() => setActiveTab("profile")}
-            />
-            <ActivityBarItem
-              icon={PlusSquare}
-              label="New Post"
-              isActive={activeTab === "new"}
-              onClick={() => setActiveTab("new")}
-            />
+            {navLinks.map((n) => (
+              <ActivityBarItem
+                href={n.href}
+                icon={n.icon}
+                isActive={pathname === n.href}
+                label={n.label}
+              />
+            ))}
           </div>
           <div className="mb-4">
-            <ActivityBarItem icon={LogOut} label="Logout" />
+            <ActivityBarItem
+              href=""
+              isActive={false}
+              onClick={() => {}}
+              icon={LogOut}
+              label="Logout"
+            />
           </div>
         </div>
 
