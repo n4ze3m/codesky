@@ -58,7 +58,6 @@ const navLinks = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Bell, label: "Notifications", href: "/notifications" },
   { icon: User, label: "Profile", href: "/profile" },
-  { icon: PlusSquare, label: "New Post", href: "/new" },
   // { icon: LogOut, label: "Logout", href: "/logout", isActive: false }
 ];
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
@@ -115,6 +114,18 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
               ))}
 
               <ActivityBarItem
+                href="/new/compose"
+                icon={PlusSquare}
+                label="new_post.txt"
+                onClick={() => {
+                  setNewModal({
+                    show: true,
+                  });
+                }}
+                isActive={false}
+              />
+
+              <ActivityBarItem
                 icon={LogOut}
                 href="logout"
                 label="Logout"
@@ -147,6 +158,17 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                 label={n.label}
               />
             ))}
+            <ActivityBarItem
+              href="/new/compose"
+              icon={PlusSquare}
+              label="new_post.txt"
+              onClick={() => {
+                setNewModal({
+                  show: true,
+                });
+              }}
+              isActive={false}
+            />
           </div>
           <div className="mb-4">
             <ActivityBarItem
@@ -162,69 +184,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Main Content Area */}
         <main className="flex-1 no-scrollbar overflow-y-auto mt-14 md:mt-0">
           <div className="max-w-4xl mx-auto p-4 md:p-6">
-            <div className="space-y-4">
-              {children}
-              {/* {isLoading ? (
-                <GitCloneLoading />
-              ) : (
-                <>
-                  <article className="bg-[#1e1e1e] border border-[#2d2d2d] rounded-lg p-4">
-                    <div className="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop"
-                        alt="User avatar"
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-medium text-[#569cd6] truncate">
-                            Sarah Developer
-                          </h3>
-                          <span className="text-xs text-[#6b6b6b] truncate">
-                            @sarahdev
-                          </span>
-                        </div>
-                        <p className="mt-2 text-sm">
-                          Just deployed my first React app! 🚀 The journey of a
-                          thousand miles begins with a single commit. #coding
-                          #webdev
-                        </p>
-                        <div className="mt-3 text-xs text-[#6b6b6b]">
-                          2 hours ago
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-
-                  <article className="bg-[#1e1e1e] border border-[#2d2d2d] rounded-lg p-4">
-                    <div className="flex items-start space-x-3">
-                      <img
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
-                        alt="User avatar"
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-medium text-[#569cd6] truncate">
-                            John Coder
-                          </h3>
-                          <span className="text-xs text-[#6b6b6b] truncate">
-                            @johncoder
-                          </span>
-                        </div>
-                        <p className="mt-2 text-sm">
-                          Here's a cool VS Code trick I learned today: Use `Ctrl
-                          + K Z` for Zen Mode! 🧘‍♂️ #vscode #productivity
-                        </p>
-                        <div className="mt-3 text-xs text-[#6b6b6b]">
-                          5 hours ago
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                </>
-              )} */}
-            </div>
+            <div className="space-y-4">{children}</div>
           </div>
         </main>
 
@@ -234,7 +194,6 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
             isMobileSidebarOpen ? "translate-x-0" : "translate-x-full"
           } md:block z-30 ${isMobileSidebarOpen ? "mt-14" : ""} md:mt-0`}
         >
-            xxx
         </div> */}
       </div>
       <Modal
