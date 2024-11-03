@@ -235,13 +235,16 @@ export const CodePost = ({ post, isCompose }: Props) => {
 
   const renderContent = (content?: string, embed?: any) => {
     return (
-      <div className="p-4">
+      <div className="p-2 sm:p-3 md:p-4">
         {content && (
-          <div className="code-line gap-2 mb-3">
-            <span className="syntax-keyword">const</span>
-            <span className="text-[#d4d4d4]"> c </span>
-            <span className="syntax-operator">=</span>
-            <span className="syntax-string">{` \`${content}\`;`}</span>
+          <div className="code-line gap-1 sm:gap-2 mb-2 sm:mb-3 text-sm sm:text-base">
+            <span className="sm:hidden">{content}</span>
+            <span className="hidden sm:inline">
+              <span className="syntax-keyword">const</span>
+              <span className="text-[#d4d4d4]"> c </span>
+              <span className="syntax-operator">=</span>
+              <span className="syntax-string">{` \`${content}\`;`}</span>
+            </span>
           </div>
         )}
         {embed && (
@@ -263,7 +266,6 @@ export const CodePost = ({ post, isCompose }: Props) => {
       </div>
     );
   };
-
   const renderQuote = (embed: any) => {
     if (!embed?.record) return null;
 

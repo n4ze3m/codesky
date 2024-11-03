@@ -19,21 +19,21 @@ export const CodeImportHeader: React.FC<Props> = ({
   return (
     <Link to={`/u/${handle}`}>
       <div
-        className={`${noBorder ? "" : "px-3 py-2 border-b border-[#2d2d2d]"}`}
+        className={`${noBorder ? "" : "px-2 sm:px-3 py-2 border-b border-[#2d2d2d]"}`}
       >
-        <div className="code-line mb-2 gap-2">
+        <div className="code-line mb-2 gap-1 sm:gap-2 flex-wrap">
           <img
             src={avatar}
             alt={displayName}
-            className="size-5 ring-2 ring-[#2d2d2d]"
+            className="size-4 sm:size-5 ring-2 ring-[#2d2d2d]"
           />
           <span className="syntax-keyword">import</span>
-          <span className="text-[#d4d4d4]"> {displayName} </span>
+          <span className="text-[#d4d4d4] text-sm sm:text-base break-all"> {displayName} </span>
           <span className="syntax-keyword">from</span>
-          <span className="syntax-string">{` '${handle}';`}</span>
+          <span className="syntax-string text-sm sm:text-base break-all">{` '${handle}';`}</span>
         </div>
-        <div className="mt-2 code-line  syntax-comment">
-          <span className="text-xs">
+        <div className="mt-2 code-line syntax-comment">
+          <span className="text-[10px] sm:text-xs">
             {time
               ? `// ${formatDistanceToNow(new Date(time), {
                   addSuffix: true,

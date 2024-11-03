@@ -14,7 +14,6 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as URepoImport } from './routes/u.$repo'
-import { Route as URepoIndexImport } from './routes/u/$repo/index'
 import { Route as PostRepoCidImport } from './routes/post.$repo.$cid'
 
 // Create Virtual Routes
@@ -22,7 +21,8 @@ import { Route as PostRepoCidImport } from './routes/post.$repo.$cid'
 const LoginLazyImport = createFileRoute('/login')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
-const URepoLikeLazyImport = createFileRoute('/u/$repo/like')()
+const URepoIndexLazyImport = createFileRoute('/u/$repo/')()
+const URepoRepliesLazyImport = createFileRoute('/u/$repo/replies')()
 
 // Create/Update Routes
 
@@ -50,17 +50,19 @@ const URepoRoute = URepoImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const URepoIndexRoute = URepoIndexImport.update({
+const URepoIndexLazyRoute = URepoIndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => URepoRoute,
-} as any)
+} as any).lazy(() => import('./routes/u/$repo/index.lazy').then((d) => d.Route))
 
-const URepoLikeLazyRoute = URepoLikeLazyImport.update({
-  id: '/like',
-  path: '/like',
+const URepoRepliesLazyRoute = URepoRepliesLazyImport.update({
+  id: '/replies',
+  path: '/replies',
   getParentRoute: () => URepoRoute,
-} as any).lazy(() => import('./routes/u/$repo/like.lazy').then((d) => d.Route))
+} as any).lazy(() =>
+  import('./routes/u/$repo/replies.lazy').then((d) => d.Route),
+)
 
 const PostRepoCidRoute = PostRepoCidImport.update({
   id: '/post/$repo/$cid',
@@ -107,18 +109,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostRepoCidImport
       parentRoute: typeof rootRoute
     }
-    '/u/$repo/like': {
-      id: '/u/$repo/like'
-      path: '/like'
-      fullPath: '/u/$repo/like'
-      preLoaderRoute: typeof URepoLikeLazyImport
+    '/u/$repo/replies': {
+      id: '/u/$repo/replies'
+      path: '/replies'
+      fullPath: '/u/$repo/replies'
+      preLoaderRoute: typeof URepoRepliesLazyImport
       parentRoute: typeof URepoImport
     }
     '/u/$repo/': {
       id: '/u/$repo/'
       path: '/'
       fullPath: '/u/$repo/'
-      preLoaderRoute: typeof URepoIndexImport
+      preLoaderRoute: typeof URepoIndexLazyImport
       parentRoute: typeof URepoImport
     }
   }
@@ -127,13 +129,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface URepoRouteChildren {
-  URepoLikeLazyRoute: typeof URepoLikeLazyRoute
-  URepoIndexRoute: typeof URepoIndexRoute
+  URepoRepliesLazyRoute: typeof URepoRepliesLazyRoute
+  URepoIndexLazyRoute: typeof URepoIndexLazyRoute
 }
 
 const URepoRouteChildren: URepoRouteChildren = {
-  URepoLikeLazyRoute: URepoLikeLazyRoute,
-  URepoIndexRoute: URepoIndexRoute,
+  URepoRepliesLazyRoute: URepoRepliesLazyRoute,
+  URepoIndexLazyRoute: URepoIndexLazyRoute,
 }
 
 const URepoRouteWithChildren = URepoRoute._addFileChildren(URepoRouteChildren)
@@ -144,8 +146,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginLazyRoute
   '/u/$repo': typeof URepoRouteWithChildren
   '/post/$repo/$cid': typeof PostRepoCidRoute
-  '/u/$repo/like': typeof URepoLikeLazyRoute
-  '/u/$repo/': typeof URepoIndexRoute
+  '/u/$repo/replies': typeof URepoRepliesLazyRoute
+  '/u/$repo/': typeof URepoIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
@@ -153,8 +155,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
   '/post/$repo/$cid': typeof PostRepoCidRoute
-  '/u/$repo/like': typeof URepoLikeLazyRoute
-  '/u/$repo': typeof URepoIndexRoute
+  '/u/$repo/replies': typeof URepoRepliesLazyRoute
+  '/u/$repo': typeof URepoIndexLazyRoute
 }
 
 export interface FileRoutesById {
@@ -164,8 +166,8 @@ export interface FileRoutesById {
   '/login': typeof LoginLazyRoute
   '/u/$repo': typeof URepoRouteWithChildren
   '/post/$repo/$cid': typeof PostRepoCidRoute
-  '/u/$repo/like': typeof URepoLikeLazyRoute
-  '/u/$repo/': typeof URepoIndexRoute
+  '/u/$repo/replies': typeof URepoRepliesLazyRoute
+  '/u/$repo/': typeof URepoIndexLazyRoute
 }
 
 export interface FileRouteTypes {
@@ -176,7 +178,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/u/$repo'
     | '/post/$repo/$cid'
-    | '/u/$repo/like'
+    | '/u/$repo/replies'
     | '/u/$repo/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -184,7 +186,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/post/$repo/$cid'
-    | '/u/$repo/like'
+    | '/u/$repo/replies'
     | '/u/$repo'
   id:
     | '__root__'
@@ -193,7 +195,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/u/$repo'
     | '/post/$repo/$cid'
-    | '/u/$repo/like'
+    | '/u/$repo/replies'
     | '/u/$repo/'
   fileRoutesById: FileRoutesById
 }
@@ -245,19 +247,19 @@ export const routeTree = rootRoute
     "/u/$repo": {
       "filePath": "u.$repo.tsx",
       "children": [
-        "/u/$repo/like",
+        "/u/$repo/replies",
         "/u/$repo/"
       ]
     },
     "/post/$repo/$cid": {
       "filePath": "post.$repo.$cid.tsx"
     },
-    "/u/$repo/like": {
-      "filePath": "u/$repo/like.lazy.tsx",
+    "/u/$repo/replies": {
+      "filePath": "u/$repo/replies.lazy.tsx",
       "parent": "/u/$repo"
     },
     "/u/$repo/": {
-      "filePath": "u/$repo/index.tsx",
+      "filePath": "u/$repo/index.lazy.tsx",
       "parent": "/u/$repo"
     }
   }
