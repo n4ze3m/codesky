@@ -5,20 +5,20 @@ export const GitCloneLoading = () => {
   const [currentStage, setCurrentStage] = React.useState(0);
 
   const stages = [
-    { message: "~/feed $ git clone new-feeds.git", delay: 500 },
-    { message: "Cloning into 'repo'...", delay: 500 },
-    { message: "remote: Enumerating objects: 892, done.", delay: 500 },
-    { message: "remote: Counting objects: 100% (892/892), done.", delay: 500 },
+    { message: "~/feed $ git clone new-feeds.git", delay: 200 },
+    { message: "Cloning into 'repo'...", delay: 200 },
+    { message: "remote: Enumerating objects: 892, done.", delay: 200 },
+    { message: "remote: Counting objects: 100% (892/892), done.", delay: 200 },
     {
       message: "remote: Compressing objects: 100% (456/456), done.",
-      delay: 500,
+      delay: 200,
     },
     {
       message: "Receiving objects: 100% (892/892), 2.31 MiB | 3.42 MiB/s",
-      delay: 500,
+      delay: 200,
     },
-    { message: "Resolving deltas: 100% (342/342), done.", delay: 500 },
-    { message: "Updating files: 100% (123/123), done.", delay: 500 },
+    { message: "Resolving deltas: 100% (342/342), done.", delay: 200 },
+    { message: "Updating files: 100% (123/123), done.", delay: 200 },
   ];
 
   React.useEffect(() => {

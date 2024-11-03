@@ -27,6 +27,7 @@ const ActivityBarItem = ({
   href: string;
   isActive: boolean;
   onClick?: () => void;
+  mainSize?: string;
 }) => (
   <div className="relative group">
     {onClick ? (
@@ -60,7 +61,13 @@ const navLinks = [
   { icon: Bell, label: "Notifications", href: "/notifications" },
   { icon: User, label: "Profile", href: "/profile" },
 ];
-export const AppLayout = ({ children }: { children: React.ReactNode }) => {
+export const AppLayout = ({
+  children,
+  mainSize = "max-w-4xl",
+}: {
+  children: React.ReactNode;
+  mainSize?: string;
+}) => {
   const [newModal, setNewModal] = useAtom(atomEditor);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
@@ -116,6 +123,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="p-4 space-y-4">
               {navLinks.map((n) => (
                 <ActivityBarItem
+                  key={n.label}
                   href={n.href}
                   icon={n.icon}
                   isActive={pathname === n.href}
@@ -167,6 +175,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                 icon={n.icon}
                 isActive={pathname === n.href}
                 label={n.label}
+                key={n.label}
               />
             ))}
             <ActivityBarItem
@@ -194,7 +203,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
         {/* Main Content Area */}
         <main className="flex-1 no-scrollbar overflow-y-auto mt-14 md:mt-0">
-          <div className="max-w-4xl mx-auto p-4 md:p-6">
+          <div className={`${mainSize} mx-auto p-4 md:p-6`}>
             <div className="space-y-4">{children}</div>
           </div>
         </main>

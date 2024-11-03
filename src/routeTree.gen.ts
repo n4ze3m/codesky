@@ -13,6 +13,8 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as URepoImport } from './routes/u.$repo'
+import { Route as URepoIndexImport } from './routes/u/$repo/index'
 import { Route as PostRepoCidImport } from './routes/post.$repo.$cid'
 
 // Create Virtual Routes
@@ -20,6 +22,7 @@ import { Route as PostRepoCidImport } from './routes/post.$repo.$cid'
 const LoginLazyImport = createFileRoute('/login')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
+const URepoLikeLazyImport = createFileRoute('/u/$repo/like')()
 
 // Create/Update Routes
 
@@ -40,6 +43,24 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const URepoRoute = URepoImport.update({
+  id: '/u/$repo',
+  path: '/u/$repo',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const URepoIndexRoute = URepoIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => URepoRoute,
+} as any)
+
+const URepoLikeLazyRoute = URepoLikeLazyImport.update({
+  id: '/like',
+  path: '/like',
+  getParentRoute: () => URepoRoute,
+} as any).lazy(() => import('./routes/u/$repo/like.lazy').then((d) => d.Route))
 
 const PostRepoCidRoute = PostRepoCidImport.update({
   id: '/post/$repo/$cid',
@@ -72,6 +93,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
+    '/u/$repo': {
+      id: '/u/$repo'
+      path: '/u/$repo'
+      fullPath: '/u/$repo'
+      preLoaderRoute: typeof URepoImport
+      parentRoute: typeof rootRoute
+    }
     '/post/$repo/$cid': {
       id: '/post/$repo/$cid'
       path: '/post/$repo/$cid'
@@ -79,16 +107,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostRepoCidImport
       parentRoute: typeof rootRoute
     }
+    '/u/$repo/like': {
+      id: '/u/$repo/like'
+      path: '/like'
+      fullPath: '/u/$repo/like'
+      preLoaderRoute: typeof URepoLikeLazyImport
+      parentRoute: typeof URepoImport
+    }
+    '/u/$repo/': {
+      id: '/u/$repo/'
+      path: '/'
+      fullPath: '/u/$repo/'
+      preLoaderRoute: typeof URepoIndexImport
+      parentRoute: typeof URepoImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface URepoRouteChildren {
+  URepoLikeLazyRoute: typeof URepoLikeLazyRoute
+  URepoIndexRoute: typeof URepoIndexRoute
+}
+
+const URepoRouteChildren: URepoRouteChildren = {
+  URepoLikeLazyRoute: URepoLikeLazyRoute,
+  URepoIndexRoute: URepoIndexRoute,
+}
+
+const URepoRouteWithChildren = URepoRoute._addFileChildren(URepoRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/u/$repo': typeof URepoRouteWithChildren
   '/post/$repo/$cid': typeof PostRepoCidRoute
+  '/u/$repo/like': typeof URepoLikeLazyRoute
+  '/u/$repo/': typeof URepoIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -96,6 +153,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
   '/post/$repo/$cid': typeof PostRepoCidRoute
+  '/u/$repo/like': typeof URepoLikeLazyRoute
+  '/u/$repo': typeof URepoIndexRoute
 }
 
 export interface FileRoutesById {
@@ -103,15 +162,39 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/u/$repo': typeof URepoRouteWithChildren
   '/post/$repo/$cid': typeof PostRepoCidRoute
+  '/u/$repo/like': typeof URepoLikeLazyRoute
+  '/u/$repo/': typeof URepoIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/login' | '/post/$repo/$cid'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/u/$repo'
+    | '/post/$repo/$cid'
+    | '/u/$repo/like'
+    | '/u/$repo/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/login' | '/post/$repo/$cid'
-  id: '__root__' | '/' | '/about' | '/login' | '/post/$repo/$cid'
+  to:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/post/$repo/$cid'
+    | '/u/$repo/like'
+    | '/u/$repo'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/login'
+    | '/u/$repo'
+    | '/post/$repo/$cid'
+    | '/u/$repo/like'
+    | '/u/$repo/'
   fileRoutesById: FileRoutesById
 }
 
@@ -119,6 +202,7 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AboutLazyRoute: typeof AboutLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
+  URepoRoute: typeof URepoRouteWithChildren
   PostRepoCidRoute: typeof PostRepoCidRoute
 }
 
@@ -126,6 +210,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AboutLazyRoute: AboutLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
+  URepoRoute: URepoRouteWithChildren,
   PostRepoCidRoute: PostRepoCidRoute,
 }
 
@@ -144,6 +229,7 @@ export const routeTree = rootRoute
         "/",
         "/about",
         "/login",
+        "/u/$repo",
         "/post/$repo/$cid"
       ]
     },
@@ -156,8 +242,23 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.lazy.tsx"
     },
+    "/u/$repo": {
+      "filePath": "u.$repo.tsx",
+      "children": [
+        "/u/$repo/like",
+        "/u/$repo/"
+      ]
+    },
     "/post/$repo/$cid": {
       "filePath": "post.$repo.$cid.tsx"
+    },
+    "/u/$repo/like": {
+      "filePath": "u/$repo/like.lazy.tsx",
+      "parent": "/u/$repo"
+    },
+    "/u/$repo/": {
+      "filePath": "u/$repo/index.tsx",
+      "parent": "/u/$repo"
     }
   }
 }

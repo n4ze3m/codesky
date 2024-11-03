@@ -239,7 +239,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
         {content && (
           <div className="code-line gap-2 mb-3">
             <span className="syntax-keyword">const</span>
-            <span className="text-[#d4d4d4]"> content </span>
+            <span className="text-[#d4d4d4]"> c </span>
             <span className="syntax-operator">=</span>
             <span className="syntax-string">{` \`${content}\`;`}</span>
           </div>

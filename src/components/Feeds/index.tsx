@@ -27,10 +27,9 @@ export const Feeds = () => {
   });
 
   useEffect(() => {
-    // Wait for GitCloneLoading animation to complete (4000ms + buffer)
     const timer = setTimeout(() => {
       setShowLoading(false);
-    }, 4500);
+    }, 1650);
 
     return () => clearTimeout(timer);
   }, []);

@@ -91,31 +91,31 @@ export default function QuoteBlock(props: {
   };
   return (
     <Link to={`/post/${postLink(props?.post, uri)}`}>
-      <div  className="border-t p-2 border-[#2d2d2d]">
-      <CodeImportHeader
-        noBorder
-        avatar={author?.avatar || ""}
-        displayName={displayName}
-        handle={author?.handle}
-        //@ts-ignore
-        time={embed?.record?.indexedAt}
-      />
+      <div className="border-t p-2 border-[#2d2d2d]">
+        <CodeImportHeader
+          noBorder
+          avatar={author?.avatar || ""}
+          displayName={displayName}
+          handle={author?.handle}
+          //@ts-ignore
+          time={embed?.record?.indexedAt}
+        />
 
-      <div className="code-line gap-2">
-        <span className="syntax-keyword">const</span>
-        <span className="text-[#d4d4d4]"> content </span>
-        <span className="syntax-operator">=</span>
-        {/* @ts-ignore */}
-        <span className="syntax-string">{` \`${(embed.record.value || (embed.record as any))?.text}\`;`}</span>
+        <div className="code-line gap-2">
+          <span className="syntax-keyword">const</span>
+          <span className="text-[#d4d4d4]"> c </span>
+          <span className="syntax-operator">=</span>
+          {/* @ts-ignore */}
+          <span className="syntax-string">{` \`${(embed.record.value || (embed.record as any))?.text}\`;`}</span>
+        </div>
+        {isQuote
+          ? ""
+          : // @ts-ignore
+            AppBskyEmbedImages.isView((embed.record.embeds as any)[0])
+            ? // @ts-ignore
+              renderImages((embed.record.embeds as any)[0])
+            : ""}
       </div>
-      {isQuote
-        ? ""
-        : // @ts-ignore
-          AppBskyEmbedImages.isView((embed.record.embeds as any)[0])
-          ? // @ts-ignore
-            renderImages((embed.record.embeds as any)[0])
-          : ""}
-   </div>
     </Link>
   );
 }
