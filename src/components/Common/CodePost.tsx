@@ -28,7 +28,6 @@ type Props = {
 };
 
 export const CodePost = ({ post, isCompose }: Props) => {
-  console.log(post);
   const author = post?.post?.author;
   // @ts-ignore
   const content = post?.post?.record?.text;
@@ -74,41 +73,27 @@ export const CodePost = ({ post, isCompose }: Props) => {
   };
 
   const renderRepostHeader = () => {
-    if (!post.reason) return null;
+    if (!post.reason || typeof post.reason !== "object") return null;
+    const reason = post.reason as ReasonRepost;
     return (
-      <div className="p-3 border-b border-[#2d2d2d]">
-        <div className="flex items-center space-x-2">
-          <GitFork className="w-4 h-4 text-[#569cd6]" />
-          <span className="text-sm text-[#569cd6]">
-            Reposted by
-            {/* {post.repost.type === 'repost' ? 'Forked' : 'Fork with changes'} by */}
-          </span>
-          {/* <img */}
-          {/* src={post.repost.author.avatar} */}
-          {/* alt={post.repost.author.name} */}
-          {/* className="w-6 h-6 rounded-full" */}
-          {/* /> */}
-          <img
-            src={(post.reason as ReasonRepost).by.avatar}
-            alt={toCamelCase(
-              (post.reason as ReasonRepost).by.displayName || ""
-            )}
-            className="size-4 rounded-full"
-          />
-          <span className="text-sm">
-            {toCamelCase((post.reason as ReasonRepost).by.displayName || "")}
-          </span>
-        </div>
-        {/* {post.repost.type === 'quote' && post.repost.content && (
-          <div className="mt-2 pl-6 border-l-2 border-[#2d2d2d] text-[#d4d4d4]">
-            <div className="syntax-comment">// Fork message:</div>
-            <div className="text-sm">{post.repost.content}</div>
+      <Link to={`/u/${reason.by.handle}`}>
+        <div className="p-3 border-b border-[#2d2d2d]">
+          <div className="flex items-center space-x-2">
+            <GitFork className="w-4 h-4 text-[#569cd6]" />
+            <span className="text-sm text-[#569cd6]">Reposted by</span>
+            <img
+              src={reason.by.avatar}
+              alt={toCamelCase(reason.by.displayName || "")}
+              className="size-4 rounded-full"
+            />
+            <span className="text-sm">
+              {toCamelCase(reason.by.displayName || reason.by.handle)}
+            </span>
           </div>
-        )} */}
-      </div>
+        </div>
+      </Link>
     );
   };
-
   const renderImages = (rImages: any) => {
     const [showImages, setShowImages] = useState(false);
 
