@@ -57,9 +57,14 @@ const ActivityBarItem = ({
   </div>
 );
 const navLinks = [
-  { icon: Home, label: "Home", href: "/" },
-  { icon: Bell, label: "Notifications", href: "/notifications" },
-  { icon: User, label: "Profile", href: "/profile" },
+  { icon: Home, type: "home", label: "Home", href: "/" },
+  {
+    icon: Bell,
+    type: "notifications",
+    label: "Notifications",
+    href: "/notifications",
+  },
+  { icon: User, type: "profile", label: "Profile", href: "/profile" },
 ];
 export const AppLayout = ({
   children,

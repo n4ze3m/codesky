@@ -2,6 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { toCamelCase } from "../../utils/to-camelcase";
 import { ProfileViewDetailed } from "@atproto/api/src/client/types/app/bsky/actor/defs";
 import agent from "../../lib/api";
+import { Image } from "../Common/Image";
 interface ProfileHeaderProps {
   data: ProfileViewDetailed;
 }
@@ -81,11 +82,36 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
       <div className="flex flex-col gap-3 sm:gap-4 md:gap-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 md:gap-6">
           <div className="flex-shrink-0 relative">
-            <img
+            <Image
               src={avatar}
               alt="Profile"
               className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-lg border-4 border-[#569cd6] shadow-xl hover:border-[#4e8cc2] transition-all duration-300 transform hover:scale-105"
             />
+            {viewer?.followedBy ? (
+              <div className=" right-0 bg-[#2a2a2a] text-[#608B4E] px-2 py-1 rounded-md text-[10px] mt-3 font-mono">
+                {`// followsYou = true`}
+              </div>
+            ) : (
+              ""
+            )}
+
+            <div className="w-full mt-4 sm:w-auto">
+              {viewer?.following ? (
+                <button
+                  onClick={handleUnFollow}
+                  className="w-full sm:w-auto bg-[#dc2626] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#b91c1c] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
+                >
+                  {`unfollow()`}
+                </button>
+              ) : (
+                <button
+                  onClick={handleFollow}
+                  className="w-full sm:w-auto bg-[#22c55e] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#16a34a] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
+                >
+                  {`follow()`}
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex-1 w-full">
@@ -100,23 +126,6 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
                   <div className="text-[#4ec9b0] font-mono text-sm sm:text-base mt-0 sm:mt-1">
                     @{handle}
                   </div>
-                </div>
-                <div className="w-full sm:w-auto">
-                  {viewer?.following ? (
-                    <button
-                      onClick={handleUnFollow}
-                      className="w-full sm:w-auto bg-[#dc2626] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#b91c1c] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
-                    >
-                      {`unfollow()`}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleFollow}
-                      className="w-full sm:w-auto bg-[#22c55e] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#16a34a] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
-                    >
-                      {`follow()`}
-                    </button>
-                  )}
                 </div>
               </div>
 

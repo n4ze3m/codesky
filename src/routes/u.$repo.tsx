@@ -28,19 +28,25 @@ export const Route = createFileRoute("/u/$repo")({
             <div className="max-w-5xl mx-auto px-2 sm:px-4 relative z-10">
               <div className="bg-[#252526] border border-[#2d2d2d] rounded-lg overflow-hidden">
                 <ProfileHeader data={data} />
-                {/* <ProfileHeader typedBio={typedBio} />
-                <ProfileTabs
-                  activeTab={activeTab}
-                  onTabChange={(tab) => setActiveTab(tab as Tab)}
-                /> */}
               </div>
-
-              {/* Content */}
               <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
                 <Outlet />
               </div>
             </div>
           </div>
+        </div>
+      </AppLayout>
+    );
+  },
+  errorComponent: () => {
+    return (
+      <AppLayout mainSize="max-w-5xl">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+          <h1 className="text-2xl font-semibold mb-2">Profile Not Found</h1>
+          <p className="text-gray-400">
+            The profile you're looking for doesn't exist or you may not have
+            access to it.
+          </p>
         </div>
       </AppLayout>
     );
