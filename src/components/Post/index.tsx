@@ -10,7 +10,10 @@ import {
   GitMerge,
   GitPullRequest,
   Code,
+  ChevronLeftCircleIcon,
+  Terminal,
 } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 
 type Props = {
   repo: string;
@@ -19,6 +22,7 @@ type Props = {
 
 export const Post = ({ repo, cid }: Props) => {
   const mainPostRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const fetchPostInfo = async ({ uri }: { uri?: string }) => {
     if (repo?.startsWith("did")) {
@@ -89,6 +93,18 @@ export const Post = ({ repo, cid }: Props) => {
 
   return (
     <div className="bg-[#1e1e1e] text-[#d4d4d4] p-6 rounded-lg shadow-xl font-mono">
+      <button
+        onClick={() =>
+          navigate({
+            to: "/",
+          })
+        }
+        className="mb-4 border-b flex items-center text-[#569cd6] hover:text-[#6bafef] transition-colors"
+      >
+        <Terminal className="mr-2" size={16} />
+        <span className="text-sm text-white">cd ..</span>
+      </button>
+
       {/* Parent thread history */}
       <div className="border-l-2 border-[#464646] pl-4 mb-6">
         {/* @ts-ignore */}

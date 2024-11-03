@@ -88,9 +88,11 @@ const navLinks = [
 export const AppLayout = ({
   children,
   mainSize = "max-w-4xl",
+  rightSidebar,
 }: {
   children: React.ReactNode;
   mainSize?: string;
+  rightSidebar?: React.ReactNode;
 }) => {
   const [newModal, setNewModal] = useAtom(atomEditor);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -279,6 +281,13 @@ export const AppLayout = ({
             <div className="space-y-4">{children}</div>
           </div>
         </main>
+        {
+          rightSidebar && (
+            <div className="hidden md:block w-60 bg-[#333333]">
+              {rightSidebar}
+            </div>
+          )
+        }
       </div>
       <Modal
         isOpen={newModal.show}
