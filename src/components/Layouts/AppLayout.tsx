@@ -37,7 +37,7 @@ const ActivityBarItem = ({
     {onClick ? (
       <button
         onClick={onClick}
-        className={`p-3 w-full flex justify-center ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
+        className={`p-3 w-full flex justify-center items-center gap-2 ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
       >
         <div className="relative">
           <Icon
@@ -49,11 +49,12 @@ const ActivityBarItem = ({
             </div>
           ) : null}
         </div>
+        <span className="md:hidden text-sm text-[#d4d4d4]">{label}</span>
       </button>
     ) : (
       <Link
         to={href}
-        className={`p-3 w-full flex justify-center ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
+        className={`p-3 w-full flex justify-center items-center gap-2 ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
       >
         <div className="relative">
           <Icon
@@ -65,6 +66,7 @@ const ActivityBarItem = ({
             </div>
           ) : null}
         </div>
+        <span className="md:hidden text-sm text-[#d4d4d4]">{label}</span>
       </Link>
     )}
     <div className="hidden md:group-hover:block absolute left-16 top-1/2 -translate-y-1/2 z-50">
@@ -73,7 +75,8 @@ const ActivityBarItem = ({
       </div>
     </div>
   </div>
-);const navLinks = [
+);
+const navLinks = [
   { icon: Home, type: "home", label: "Home", href: "/" },
   {
     icon: Bell,

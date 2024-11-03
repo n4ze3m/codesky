@@ -1,11 +1,11 @@
 import React from "react";
 
-export const GitCloneLoading = () => {
+export const GitCloneLoading = ({ name = "new-feeds" }: { name?: string }) => {
   const [lines, setLines] = React.useState<string[]>([]);
   const [currentStage, setCurrentStage] = React.useState(0);
 
   const stages = [
-    { message: "~/feed $ git clone new-feeds.git", delay: 200 },
+    { message: `~/feed $ git clone ${name}.git`, delay: 200 },
     { message: "Cloning into 'repo'...", delay: 200 },
     { message: "remote: Enumerating objects: 892, done.", delay: 200 },
     { message: "remote: Counting objects: 100% (892/892), done.", delay: 200 },

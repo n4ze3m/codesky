@@ -64,7 +64,7 @@ export const Post = ({ repo, cid }: Props) => {
   }, [data]);
 
   if (isLoading) {
-    return <GitCloneLoading />;
+    return <GitCloneLoading name="post" />;
   }
 
   if (isError) {

@@ -41,13 +41,12 @@ export const ProfilePosts = ({
   }, [inView, hasNextPage, fetchNextPage]);
 
   if (status === "pending") {
-    return <GitCloneLoading />;
+    return <GitCloneLoading name="posts" />;
   }
 
   if (status === "error") {
     return <div>Error fetching feeds</div>;
   }
-
 
   return (
     <div className="p-2 mx-auto">

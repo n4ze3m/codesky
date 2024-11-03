@@ -14,6 +14,7 @@ import {
   Star,
   UserPlus,
 } from "lucide-react";
+import { GitCloneLoading } from "../Common/Loading";
 
 export const NotificationsBody = () => {
   const queryClient = useQueryClient();
@@ -147,11 +148,7 @@ export const NotificationsBody = () => {
 
   if (status === "pending") {
     return (
-      <div className="terminal-window">
-        <div className="code-line syntax-comment">
-          # Fetching notifications...
-        </div>
-      </div>
+      <GitCloneLoading name="notifications" />
     );
   }
 

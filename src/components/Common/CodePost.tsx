@@ -52,7 +52,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
     );
   }
 
-  if(!mainPost?.uri) return null
+  if (!mainPost?.uri) return null;
 
   const renderActions = ({ post }: { post: FeedViewPost | PostView }) => {
     if (isCompose) return null;
@@ -130,11 +130,11 @@ export const CodePost = ({ post, isCompose }: Props) => {
 
         {showImages && (
           <div className="ml-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2  gap-4 mt-2">
+            <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 mt-2">
               {images.map(
                 (img: { image: string; alt: string }, index: number) => (
-                  <div key={index} className="relative aspect-square">
-                    <Image src={img.image} alt={img.alt} />
+                  <div key={index} className="relative w-full aspect-square">
+                    <Image src={img.image} alt={img.alt} className="object-cover" />
                   </div>
                 )
               )}
@@ -173,7 +173,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
         </div>
         {showVideo && (
           <div className="ml-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 mt-2">
               {videoInfo.map(
                 (
                   video: {
@@ -220,7 +220,6 @@ export const CodePost = ({ post, isCompose }: Props) => {
       </div>
     );
   };
-
   const renderContent = (content?: string, embed?: any) => {
     return (
       <div className="p-2 sm:p-3 md:p-4">
@@ -266,7 +265,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
     return (
       <div className="reply-thread-container bg-[#1e1e1e] rounded-lg border border-[#2d2d2d]">
         <div className="thread-header border-b border-[#2d2d2d] p-2">
-          <div className="flex gap-1">
+          <div className="flex gap-1 text-sm sm:text-base overflow-x-auto">
             <span className="syntax-keyword">git </span>
             <span className="text-[#4ec9b0]">branch </span>
             <span className="text-[#d4d4d4]">--track </span>
@@ -275,12 +274,12 @@ export const CodePost = ({ post, isCompose }: Props) => {
           </div>
         </div>
 
-        <div className="thread-content p-4">
+        <div className="thread-content p-2 sm:p-4">
           {post.reply.parent.cid != post.reply.root.cid &&
             // @ts-ignore
             post.reply.parent.author.did == post.reply.root.author.did && (
               <div className="parent-thread">
-                <div className="code-line syntax-comment mb-2">
+                <div className="code-line syntax-comment mb-2 text-sm sm:text-base">
                   # Parent commit
                 </div>
                 <CodePost post={{ post: post.reply.parent as any }} />
@@ -290,7 +289,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
           {(post.reply.parent.record as any)?.reply?.parent.cid !=
           (post.reply.parent.record as any)?.reply?.root.cid ? (
             <div className="expand-thread my-2">
-              <div className="flex gap-1">
+              <div className="flex gap-1 text-sm sm:text-base overflow-x-auto">
                 <span className="syntax-keyword">git </span>
                 <span className="text-[#dcdcaa]">log</span>
                 <span className="text-[#d4d4d4]"> --oneline</span>
@@ -305,15 +304,15 @@ export const CodePost = ({ post, isCompose }: Props) => {
           ) : null}
 
           <div className="replies-container">
-            <div className="pl-6 border-l-2 border-[#569cd6]">
-              <div className="code-line syntax-comment"># Base commit</div>
+            <div className="pl-3 sm:pl-6 border-l-2 border-[#569cd6]">
+              <div className="code-line syntax-comment text-sm sm:text-base"># Base commit</div>
               <CodePost post={{ post: post.reply.parent as any }} />
             </div>
-            <div className="mt-4 pl-6 border-l-2 border-[#4ec9b0]">
-              <div className="code-line syntax-comment"># New changes</div>
+            <div className="mt-4 pl-3 sm:pl-6 border-l-2 border-[#4ec9b0]">
+              <div className="code-line syntax-comment text-sm sm:text-base"># New changes</div>
               <CodePost post={{ post: post.post as any }} />
             </div>
-            <div className="flex gap-1 mt-2">
+            <div className="flex gap-1 mt-2 text-sm sm:text-base overflow-x-auto">
               <span className="syntax-keyword">git </span>
               <span className="text-[#4ec9b0]">branch </span>
               <span className="text-[#d4d4d4]">--track </span>
@@ -324,7 +323,7 @@ export const CodePost = ({ post, isCompose }: Props) => {
         </div>
 
         <div className="thread-footer border-t border-[#2d2d2d] p-2">
-          <div className="flex">
+          <div className="flex text-sm sm:text-base overflow-x-auto">
             <span className="text-[#d4d4d4]">git merge feature</span>
             <span className="syntax-comment ml-2"># Merge complete</span>
           </div>

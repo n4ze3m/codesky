@@ -100,14 +100,15 @@ export default function QuoteBlock(props: {
           //@ts-ignore
           time={embed?.record?.indexedAt}
         />
-
         <div className="code-line gap-2">
-          <span className="syntax-keyword">const</span>
-          <span className="text-[#d4d4d4]"> c </span>
-          <span className="syntax-operator">=</span>
+          <span className="hidden sm:inline syntax-keyword">const</span>
+          <span className="hidden sm:inline text-[#d4d4d4]"> c </span>
+          <span className="hidden sm:inline syntax-operator">=</span>
           {/* @ts-ignore */}
-          <span className="syntax-string">{` \`${(embed.record.value || (embed.record as any))?.text}\`;`}</span>
-        </div>
+          <span className="hidden sm:inline syntax-string">{` \`${(embed.record.value || (embed.record as any))?.text}\`;`}</span>
+          {/* @ts-ignore */}
+          <span className="sm:hidden text-white">{`${(embed.record.value || (embed.record as any))?.text}`}</span>
+        </div>{" "}
         {isQuote
           ? ""
           : // @ts-ignore
