@@ -17,6 +17,7 @@ export const Route = createFileRoute("/u/$repo")({
 
     return data.data;
   },
+  shouldReload: true,
   component: () => {
     const data = Route.useLoaderData();
     return (

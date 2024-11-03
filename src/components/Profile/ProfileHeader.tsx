@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { toCamelCase } from "../../utils/to-camelcase";
 import { ProfileViewDetailed } from "@atproto/api/src/client/types/app/bsky/actor/defs";
-
+import agent from "../../lib/api";
 interface ProfileHeaderProps {
   data: ProfileViewDetailed;
 }
@@ -17,8 +17,12 @@ const MetricsDetails = ({
 }) => {
   return (
     <button className="hover:underline gap-1 inline-flex items-center">
-      <span className="syntax-function text-xs sm:text-sm md:text-base">{label}:</span>
-      <span className="syntax-number text-xs sm:text-sm md:text-base">{value}</span>
+      <span className="syntax-function text-xs sm:text-sm md:text-base">
+        {label}:
+      </span>
+      <span className="syntax-number text-xs sm:text-sm md:text-base">
+        {value}
+      </span>
     </button>
   );
 };
@@ -51,7 +55,26 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
     followersCount,
     followsCount,
     postsCount,
+    did,
   } = data;
+
+  const handleFollow = async () => {
+    try {
+      await agent.follow(did);
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to follow:", error);
+    }
+  };
+
+  const handleUnFollow = async () => {
+    try {
+      await agent.deleteFollow(viewer?.following || "");
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to unfollow:", error);
+    }
+  };
 
   return (
     <div className="p-3 sm:p-4 md:p-6 bg-[#1e1e1e] rounded-lg">
@@ -74,15 +97,23 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
                     {toCamelCase(name ?? "")}
                     <span className="text-[#d4d4d4]">{` = `}</span>
                   </h1>
-                  <div className="text-[#4ec9b0] font-mono text-sm sm:text-base mt-0 sm:mt-1">@{handle}</div>
+                  <div className="text-[#4ec9b0] font-mono text-sm sm:text-base mt-0 sm:mt-1">
+                    @{handle}
+                  </div>
                 </div>
                 <div className="w-full sm:w-auto">
                   {viewer?.following ? (
-                    <button className="w-full sm:w-auto bg-[#dc2626] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#b91c1c] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base">
+                    <button
+                      onClick={handleUnFollow}
+                      className="w-full sm:w-auto bg-[#dc2626] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#b91c1c] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
+                    >
                       {`unfollow()`}
                     </button>
                   ) : (
-                    <button className="w-full sm:w-auto bg-[#22c55e] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#16a34a] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base">
+                    <button
+                      onClick={handleFollow}
+                      className="w-full sm:w-auto bg-[#22c55e] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#16a34a] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
+                    >
                       {`follow()`}
                     </button>
                   )}
@@ -97,7 +128,9 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
               </div>
 
               <div className="p-2 border-t border-[#2d2d2d] w-full">
-                <div className="text-[#608B4E] mb-2 text-xs sm:text-sm">// User stats</div>
+                <div className="text-[#608B4E] mb-2 text-xs sm:text-sm">
+                  // User stats
+                </div>
                 <div className="gap-2 flex flex-wrap items-center text-xs sm:text-sm">
                   <span className="syntax-keyword">const</span>
                   <span className="text-[#d4d4d4]"> metrics </span>
