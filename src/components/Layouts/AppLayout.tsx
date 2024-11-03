@@ -15,12 +15,15 @@ import { CodeEditor } from "../Common/CodeEditor";
 import { isAuthenticated } from "../../utils/auth";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import agent, { SESSION_LOCAL_STORAGE_KEY } from "../../lib/api";
+import { atomUser } from "../../store/user";
+import { useQuery } from "@tanstack/react-query";
 const ActivityBarItem = ({
   icon: Icon,
   label,
   isActive = false,
   href,
   onClick,
+  count
 }: {
   icon: React.ElementType;
   label: string;
@@ -28,6 +31,7 @@ const ActivityBarItem = ({
   isActive: boolean;
   onClick?: () => void;
   mainSize?: string;
+  count?: number;
 }) => (
   <div className="relative group">
     {onClick ? (
@@ -35,18 +39,32 @@ const ActivityBarItem = ({
         onClick={onClick}
         className={`p-3 w-full flex justify-center ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
       >
-        <Icon
-          className={`w-6 h-6 ${isActive ? "text-[#569cd6]" : "text-[#858585] group-hover:text-[#d4d4d4]"}`}
-        />
+        <div className="relative">
+          <Icon
+            className={`w-6 h-6 ${isActive ? "text-[#569cd6]" : "text-[#858585] group-hover:text-[#d4d4d4]"}`}
+          />
+          {count && count > 0 ? (
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              {count}
+            </div>
+          ) : null}
+        </div>
       </button>
     ) : (
       <Link
         to={href}
         className={`p-3 w-full flex justify-center ${isActive ? "border-l-2 border-[#569cd6] md:border-l-2" : "border-l-2 border-transparent"}`}
       >
-        <Icon
-          className={`w-6 h-6 ${isActive ? "text-[#569cd6]" : "text-[#858585] group-hover:text-[#d4d4d4]"}`}
-        />
+        <div className="relative">
+          <Icon
+            className={`w-6 h-6 ${isActive ? "text-[#569cd6]" : "text-[#858585] group-hover:text-[#d4d4d4]"}`}
+          />
+          {count && count > 0 ? (
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              {count}
+            </div>
+          ) : null}
+        </div>
       </Link>
     )}
     <div className="hidden md:group-hover:block absolute left-16 top-1/2 -translate-y-1/2 z-50">
@@ -55,8 +73,7 @@ const ActivityBarItem = ({
       </div>
     </div>
   </div>
-);
-const navLinks = [
+);const navLinks = [
   { icon: Home, type: "home", label: "Home", href: "/" },
   {
     icon: Bell,
@@ -64,7 +81,6 @@ const navLinks = [
     label: "Notifications",
     href: "/notifications",
   },
-  { icon: User, type: "profile", label: "Profile", href: "/profile" },
 ];
 export const AppLayout = ({
   children,
@@ -80,12 +96,43 @@ export const AppLayout = ({
   const [logoutConfirmation, setLogoutConfirmation] = React.useState("");
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [_, setUser] = useAtom(atomUser);
 
   React.useEffect(() => {
     if (!isAuthenticated()) {
       navigate({ to: "/login" });
     }
   }, [navigate]);
+
+  const getProfile = async () => {
+    const localData = localStorage.getItem(SESSION_LOCAL_STORAGE_KEY);
+    if (localData) {
+      const parsedData = JSON.parse(localData);
+      try {
+        const data = await agent.getProfile({
+          actor: parsedData.did,
+        });
+        setUser({
+          user: data.data,
+        });
+        return data.data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    }
+  };
+
+  const { data } = useQuery({
+    queryKey: ["getUserInfo"],
+    queryFn: getProfile,
+  });
+
+  const { data: notificationData } = useQuery({
+    queryKey: ["getUserNotification"],
+    queryFn: () => agent.countUnreadNotifications({}),
+    refetchInterval: 5000,
+  });
 
   const handleLoutout = async () => {
     if (logoutConfirmation === "logout") {
@@ -133,9 +180,17 @@ export const AppLayout = ({
                   icon={n.icon}
                   isActive={pathname === n.href}
                   label={n.label}
+                  count={
+                    n.type === "notifications" ? notificationData?.data?.count : undefined
+                  }
                 />
               ))}
-
+              <ActivityBarItem
+                href={`/u/${data?.handle}`}
+                icon={User}
+                label="Profile"
+                isActive={pathname === `/u/${data?.handle}`}
+              />
               <ActivityBarItem
                 href="/new/compose"
                 icon={PlusSquare}
@@ -181,8 +236,17 @@ export const AppLayout = ({
                 isActive={pathname === n.href}
                 label={n.label}
                 key={n.label}
+                count={
+                  n.type === "notifications" ? notificationData?.data?.count : undefined
+                }
               />
             ))}
+            <ActivityBarItem
+              href={`/u/${data?.handle}`}
+              icon={User}
+              label="Profile"
+              isActive={pathname === `/u/${data?.handle}`}
+            />
             <ActivityBarItem
               href="/new/compose"
               icon={PlusSquare}

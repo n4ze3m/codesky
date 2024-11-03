@@ -3,6 +3,8 @@ import { toCamelCase } from "../../utils/to-camelcase";
 import { ProfileViewDetailed } from "@atproto/api/src/client/types/app/bsky/actor/defs";
 import agent from "../../lib/api";
 import { Image } from "../Common/Image";
+import { useAtom } from "jotai";
+import { atomUser } from "../../store/user";
 interface ProfileHeaderProps {
   data: ProfileViewDetailed;
 }
@@ -59,6 +61,8 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
     did,
   } = data;
 
+  const [user] = useAtom(atomUser);
+
   const handleFollow = async () => {
     try {
       await agent.follow(did);
@@ -96,21 +100,22 @@ export function ProfileHeader({ data }: ProfileHeaderProps) {
             )}
 
             <div className="w-full mt-4 sm:w-auto">
-              {viewer?.following ? (
-                <button
-                  onClick={handleUnFollow}
-                  className="w-full sm:w-auto bg-[#dc2626] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#b91c1c] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
-                >
-                  {`unfollow()`}
-                </button>
-              ) : (
-                <button
-                  onClick={handleFollow}
-                  className="w-full sm:w-auto bg-[#22c55e] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#16a34a] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
-                >
-                  {`follow()`}
-                </button>
-              )}
+              {user?.user?.did !== did &&
+                (viewer?.following ? (
+                  <button
+                    onClick={handleUnFollow}
+                    className="w-full sm:w-auto bg-[#dc2626] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#b91c1c] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
+                  >
+                    {`unfollow()`}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleFollow}
+                    className="w-full sm:w-auto bg-[#22c55e] text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#16a34a] transition-all duration-300 font-mono transform hover:scale-105 text-sm sm:text-base"
+                  >
+                    {`follow()`}
+                  </button>
+                ))}
             </div>
           </div>
 

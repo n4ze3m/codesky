@@ -18,6 +18,7 @@ import { Route as PostRepoCidImport } from './routes/post.$repo.$cid'
 
 // Create Virtual Routes
 
+const NotificationsLazyImport = createFileRoute('/notifications')()
 const LoginLazyImport = createFileRoute('/login')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -25,6 +26,12 @@ const URepoIndexLazyImport = createFileRoute('/u/$repo/')()
 const URepoRepliesLazyImport = createFileRoute('/u/$repo/replies')()
 
 // Create/Update Routes
+
+const NotificationsLazyRoute = NotificationsLazyImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/notifications.lazy').then((d) => d.Route))
 
 const LoginLazyRoute = LoginLazyImport.update({
   id: '/login',
@@ -95,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/u/$repo': {
       id: '/u/$repo'
       path: '/u/$repo'
@@ -144,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/notifications': typeof NotificationsLazyRoute
   '/u/$repo': typeof URepoRouteWithChildren
   '/post/$repo/$cid': typeof PostRepoCidRoute
   '/u/$repo/replies': typeof URepoRepliesLazyRoute
@@ -154,6 +169,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/notifications': typeof NotificationsLazyRoute
   '/post/$repo/$cid': typeof PostRepoCidRoute
   '/u/$repo/replies': typeof URepoRepliesLazyRoute
   '/u/$repo': typeof URepoIndexLazyRoute
@@ -164,6 +180,7 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/login': typeof LoginLazyRoute
+  '/notifications': typeof NotificationsLazyRoute
   '/u/$repo': typeof URepoRouteWithChildren
   '/post/$repo/$cid': typeof PostRepoCidRoute
   '/u/$repo/replies': typeof URepoRepliesLazyRoute
@@ -176,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/login'
+    | '/notifications'
     | '/u/$repo'
     | '/post/$repo/$cid'
     | '/u/$repo/replies'
@@ -185,6 +203,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/login'
+    | '/notifications'
     | '/post/$repo/$cid'
     | '/u/$repo/replies'
     | '/u/$repo'
@@ -193,6 +212,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/login'
+    | '/notifications'
     | '/u/$repo'
     | '/post/$repo/$cid'
     | '/u/$repo/replies'
@@ -204,6 +224,7 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AboutLazyRoute: typeof AboutLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
+  NotificationsLazyRoute: typeof NotificationsLazyRoute
   URepoRoute: typeof URepoRouteWithChildren
   PostRepoCidRoute: typeof PostRepoCidRoute
 }
@@ -212,6 +233,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AboutLazyRoute: AboutLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
+  NotificationsLazyRoute: NotificationsLazyRoute,
   URepoRoute: URepoRouteWithChildren,
   PostRepoCidRoute: PostRepoCidRoute,
 }
@@ -231,6 +253,7 @@ export const routeTree = rootRoute
         "/",
         "/about",
         "/login",
+        "/notifications",
         "/u/$repo",
         "/post/$repo/$cid"
       ]
@@ -243,6 +266,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.lazy.tsx"
+    },
+    "/notifications": {
+      "filePath": "notifications.lazy.tsx"
     },
     "/u/$repo": {
       "filePath": "u.$repo.tsx",

@@ -51,6 +51,9 @@ export const CodePost = ({ post, isCompose }: Props) => {
       </div>
     );
   }
+
+  if(!mainPost?.uri) return null
+
   const renderActions = ({ post }: { post: FeedViewPost | PostView }) => {
     if (isCompose) return null;
 
