@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { Code2, Rocket, Users, Terminal, ChevronRight, Star, Zap } from 'lucide-react';
+import { Code2, Rocket, Users, Terminal, ChevronRight, Star, Zap, GithubIcon } from 'lucide-react';
 import { atomFeed } from '../../store/feed';
 
 interface FeedItem {
@@ -121,6 +121,14 @@ const [activeFeed, setActiveFeed] = useAtom(atomFeed)
       <div className="text-gray-400 font-mono mt-4 text-sm">
         {`// ${FEED_COLLECTION.name} v${FEED_COLLECTION.version}`}
       </div>
+      <a 
+        href="https://github.com/n4ze3m/codesky" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 mt-4 text-gray-400 hover:text-gray-300 transition-colors"
+      >
+        <GithubIcon className="w-4 h-4" />
+      </a>
     </div>
   );
 };
